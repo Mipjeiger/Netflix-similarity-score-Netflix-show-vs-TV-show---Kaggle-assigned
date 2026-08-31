@@ -1,0 +1,17 @@
+{
+  "id": "miftahhadiyannoor/netflix-shows-eda-machine-learning-engineering",
+  "title": "Netflix Shows EDA Machine Learning Engineering",
+  "code_file": "01_eda.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "true",
+  "enable_gpu": "false",
+  "enable_tpu": "false",
+  "enable_internet": "false",
+  "dataset_sources": [
+    "shivamb/netflix-shows"
+  ],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}
