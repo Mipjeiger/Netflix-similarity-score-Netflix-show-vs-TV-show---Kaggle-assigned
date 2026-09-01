@@ -14,40 +14,6 @@ End-to-end MLOps platform for Netflix content analysis with a **content recommen
 - 🔄 **MLOps Pipeline**: Automated training, tracking, and deployment
 - 📈 **Monitoring**: Real-time metrics and performance tracking
 
-## 🏗️ Architecture
-┌─────────────────────────────────────────────────────────────┐
-│ User Interface │
-│ ┌─────────────┐ ┌─────────────┐ ┌─────────────────────┐ │
-│ │ Streamlit │ │ Grafana │ │ FastAPI Docs │ │
-│ │ Dashboard │ │ Monitoring │ │ (Swagger UI) │ │
-│ └─────────────┘ └─────────────┘ └─────────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-│
-┌─────────────────────────────────────────────────────────────┐
-│ API Layer │
-│ ┌─────────────────────────────────────────────────────┐ │
-│ │ FastAPI REST API │ │
-│ │ • /recommend • /health • /stats/content │ │
-│ └─────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-│
-┌─────────────────────────────────────────────────────────────┐
-│ ML Pipeline Layer │
-│ ┌─────────────┐ ┌─────────────┐ ┌─────────────────────┐ │
-│ │ Airflow │ │ MLflow │ │ Prometheus │ │
-│ │ DAGs │──│ Tracking │──│ Metrics │ │
-│ └─────────────┘ └─────────────┘ └─────────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-│
-┌─────────────────────────────────────────────────────────────┐
-│ Data & Model Layer │
-│ ┌─────────────┐ ┌─────────────┐ ┌─────────────────────┐ │
-│ │ PostgreSQL │ │ Models │ │ Vectorizer │ │
-│ │ (Metadata) │ │ (Pickle) │ │ (TF-IDF) │ │
-│ └─────────────┘ └─────────────┘ └─────────────────────┘ │
-└─────────────────────────────────────────────────────────────┘
-
-
 ## ✨ Features
 
 | Feature | Description | Status |
@@ -74,69 +40,6 @@ End-to-end MLOps platform for Netflix content analysis with a **content recommen
 | **CI/CD** | GitHub Actions |
 | **Container** | Docker + Docker Compose |
 | **ML** | scikit-learn, pandas, numpy, networkx |
-
-## 📂 Project Structure
-netflix_engineering/
-├── 📁 .github/ # CI/CD workflows
-│ └── workflows/
-│ ├── ci.yml # Continuous Integration
-│ ├── cd.yml # Continuous Deployment
-│ ├── model_validation.yml # Model validation
-│ └── security_scan.yml # Security scanning
-│
-├── 📁 airflow/ # Pipeline orchestration
-│ ├── Dockerfile
-│ ├── airflow.cfg
-│ └── dags/
-│ ├── netflix_pipeline.py
-│ └── training_pipeline.py
-│
-├── 📁 api/ # FastAPI service
-│ ├── Dockerfile
-│ ├── main.py
-│ ├── routes.py
-│ └── schemas.py
-│
-├── 📁 config/ # Configuration files
-│ ├── config.yaml
-│ ├── logging.yaml
-│ └── model_config.yaml
-│
-├── 📁 monitoring/ # Observability stack
-│ ├── grafana/
-│ │ ├── Dockerfile
-│ │ └── dashboards/
-│ │ └── netflix_dashboard.json
-│ └── prometheus/
-│ └── prometheus.yml
-│
-├── 📁 notebooks/ # Jupyter notebooks
-│ ├── eda/
-│ │ └── 01_eda.ipynb
-│ └── modeling/
-│
-├── 📁 scripts/ # Deployment scripts
-│ ├── deploy.sh
-│ └── setup.sh
-│
-├── 📁 streamlit/ # UI application
-│ ├── app.py
-│ └── pages/
-│ ├── 01_dashboard.py
-│ ├── 02_recommendations.py
-│ └── 03_network_analysis.py
-│
-├── 📁 tests/ # Unit & integration tests
-│ ├── init.py
-│ ├── test_api.py
-│ ├── test_data.py
-│ └── test_models.py
-│
-├── 🐳 docker-compose.yml
-├── 📄 README.md
-├── 📄 .env
-├── 📄 .gitignore
-└── 📄 requirements.txt
 
 
 ## 🚀 Quick Start
@@ -290,6 +193,7 @@ docker-compose up -d --scale api=3
 
 # Rebuild and restart
 docker-compose up -d --build
+
 🤝 Contributing
 
 Fork the repository
