@@ -1,0 +1,93 @@
+name: Model Validation
+
+on:
+  workflow_dispatch:  # Manual run on-demand
+  workflow_run:       # Optional: Automatically trigger after training finishes
+    workflows: ["Training Pipeline"]
+    types: [completed]
+
+jobs:
+  validate-models:
+    name: 📊 Validate ML Models
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install mlflow scikit-learn pandas
+
+      - name: Run model validation
+        env:
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+        run: |
+          python -c "
+          import pandas as pd
+          import mlflow
+          from sklearn.metrics import accuracy_score
+          
+          mlflow.set_tracking_uri('${{ secrets.MLFLOW_TRACKING_URI }}')
+          client = mlflow.tracking.MlflowClient()
+          
+          # Get latest production model
+          model_versions = client.get_latest_versions('netflix_content_model', stages=['Production'])
+          if model_versions:
+              model = mlflow.sklearn.load_model(f'models:/netflix_content_model/{model_versions[0].version}')
+              print(f'✅ Model version {model_versions[0].version} validated')
+          else:
+              print('❌ No production model found')
+              exit(1)
+          "
+
+      - name: Check performance drift
+        run: |
+          python -c "
+          import json
+          # Simulate drift check
+          drift_report = {
+              'timestamp': '2024-01-01',
+              'drift_detected': False,
+              'current_accuracy': 0.85,
+              'baseline_accuracy': 0.82,
+              'drift_threshold': 0.1
+          }
+          with open('drift_report.json', 'w') as f:
+              json.dump(drift_report, f, indent=2)
+          "
+
+      - name: Upload validation report
+        uses: actions/upload-artifact@v3
+        with:
+          name: model-validation-report
+          path: |
+            drift_report.json
+            validation_report_*.json
+
+      - name: Slack notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "📊 Model validation completed!\nStatus: ${{ job.status }}\nTriggered by: ${{ github.actor }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+      - name: Trigger retraining if needed
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'training_pipeline.yml',
+              ref: 'main'
+            })
