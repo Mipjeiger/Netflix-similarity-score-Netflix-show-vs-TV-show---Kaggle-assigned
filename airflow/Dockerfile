@@ -2,8 +2,11 @@ FROM apache/airflow:2.7.1-python3.11
 
 USER root
 
-RUN apt-get update && apt-get install -y gcc python3-dev && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y git gcc python3-dev && \
+    rm -rf /var/lib/apt/lists/* && \
+    mkdir -p /mlflow/artifacts && \
+    chown -R 50000:0 /mlflow && \
+    chmod -R 777 /mlflow
 
 USER airflow
 
